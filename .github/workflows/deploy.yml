@@ -11,7 +11,7 @@ on:
         type: string
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -43,6 +43,19 @@ jobs:
         run: |
           mkdir -p backend/publish/wwwroot
           cp -r frontend/dist/sbytdl-web/browser/* backend/publish/wwwroot/
+
+      - name: Build-only run (deploy secrets missing)
+        if: ${{ secrets.DEPLOY_HOST == '' || secrets.DEPLOY_USER == '' || secrets.DEPLOY_SSH_KEY == '' || secrets.DEPLOY_TARGET_DIR == '' }}
+        run: |
+          echo "Deploy skipped: required deploy secrets are not fully configured."
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ secrets.DEPLOY_HOST != '' && secrets.DEPLOY_USER != '' && secrets.DEPLOY_SSH_KEY != '' && secrets.DEPLOY_TARGET_DIR != '' }}
+
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Configure SSH key
         run: |
