@@ -1,0 +1,35 @@
+<div class="page">
+  <h1>sbytdl</h1>
+  <p>Paste one URL per line. Downloads run on the backend server using yt-dlp.</p>
+
+  <label>URLs</label>
+  <textarea [(ngModel)]="urlsText" rows="6" placeholder="https://...&#10;https://..."></textarea>
+
+  <label>Output directory (server path)</label>
+  <input [(ngModel)]="outputDirectory" placeholder="/home/user/downloads" />
+
+  <div class="row">
+    <label><input type="checkbox" [(ngModel)]="createDirectory" /> Create directory if missing</label>
+    <label><input type="checkbox" [(ngModel)]="overwriteExisting" /> Overwrite if file exists</label>
+  </div>
+
+  <label>Single-file name (used when one URL)</label>
+  <input [(ngModel)]="fileName" placeholder="my-video" />
+
+  <label>Name template for multiple URLs (supports {index})</label>
+  <input [(ngModel)]="nameTemplate" placeholder="Series - S01E{index}" />
+
+  <div class="buttons">
+    <button (click)="preview()">Check overwrite conflicts</button>
+    <button (click)="startDownload()">Start download</button>
+    <button (click)="updateYtdlp()">Update yt-dlp</button>
+  </div>
+
+  <p class="conflict">{{ conflictMessage }}</p>
+
+  <div class="progress-wrap" *ngIf="status !== 'idle'">
+    <div class="progress-label">Status: {{ status }} | {{ progress | number:'1.0-1' }}%</div>
+    <progress [value]="progress" max="100"></progress>
+    <div class="message">{{ latestMessage }}</div>
+  </div>
+</div>
